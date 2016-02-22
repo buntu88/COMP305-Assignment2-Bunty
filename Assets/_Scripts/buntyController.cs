@@ -25,7 +25,7 @@ public class buntyController : MonoBehaviour {
     {
         this._move = Input.GetAxis("Horizontal");
         this._jump = Input.GetAxis("Vertical");
-        Debug.Log(this._jump);
+//        Debug.Log(this._jump);
         if (this._move != 0)
         {
             if (this._move > 0)
@@ -41,6 +41,11 @@ public class buntyController : MonoBehaviour {
 
             // call the walk clip
             this._animator.SetInteger("AnimState", 1);
+            if (this._jump > 0)
+            {
+                // call the "jump" clip
+                this._animator.SetInteger("AnimState", 2);
+            }
         }
         else {
 
@@ -48,11 +53,7 @@ public class buntyController : MonoBehaviour {
             this._animator.SetInteger("AnimState", 0);
         }
 
-        if (this._jump > 0)
-        {
-            // call the "jump" clip
-            this._animator.SetInteger("AnimState", 2);
-        }
+
     }
 
     // PRIVATE METHODS
