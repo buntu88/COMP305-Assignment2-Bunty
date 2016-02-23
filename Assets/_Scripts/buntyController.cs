@@ -24,7 +24,7 @@ public class buntyController : MonoBehaviour {
     void Update()
     {
         this._move = Input.GetAxis("Horizontal");
-        this._jump = Input.GetAxis("Vertical");
+        this._jump = Input.GetAxis("Jump");
 //        Debug.Log(this._jump);
         if (this._move != 0)
         {
