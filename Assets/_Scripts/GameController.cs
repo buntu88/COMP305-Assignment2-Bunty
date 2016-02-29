@@ -3,14 +3,17 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+[System.Serializable]
 public class GameController : MonoBehaviour {
 	// PRIVATE INSTANCE VARIABLES
 	private int _scoreValue;
-	private int _livesValue;
+    private int _livesValue;
+
+    public buntyController buntyController;
 
 
-	// PUBLIC ACCESS METHODS
-	public int ScoreValue {
+    // PUBLIC ACCESS METHODS
+    public int ScoreValue {
 		get {
 			return this._scoreValue;
 		}
@@ -60,23 +63,34 @@ public class GameController : MonoBehaviour {
 	private void _initialize() {
 		this.ScoreValue = 0;
 		this.LivesValue = 5;
-		//this.GameOverLabel.gameObject.SetActive (false);
-		//this.HighScoreLabel.gameObject.SetActive (false);
-		//this.RestartButton.gameObject.SetActive(false);
-	}
+        this.GameOverLabel.gameObject.SetActive(false);
+        this.HighScoreLabel.gameObject.SetActive(false);
+        this.RestartButton.gameObject.SetActive(false);
+    }
 
-	private void _endGame() {
-		//this.HighScoreLabel.text = "High Score: " + this._scoreValue;
-		//this.GameOverLabel.gameObject.SetActive (true);
-		//this.HighScoreLabel.gameObject.SetActive (true);
-		this.LivesLabel.gameObject.SetActive (false);
+	public void _endGame() {
+        if (this._livesValue < 1)
+        {
+            this.GameOverLabel.text = "Game Over";
+        }
+        else
+        {
+            this.GameOverLabel.text = "You Won";
+        }
+        this.HighScoreLabel.text = "High Score: " + this._scoreValue;
+        this.GameOverLabel.gameObject.SetActive(true);
+        this.HighScoreLabel.gameObject.SetActive(true);
+        this.LivesLabel.gameObject.SetActive (false);
 		this.ScoreLabel.gameObject.SetActive (false);
-		//this.RestartButton.gameObject.SetActive (true);
-	}
+        this.RestartButton.gameObject.SetActive(true);
+    }
 
-	// PUBLIC METHODS
-
-	public void RestartButtonClick() {
-		SceneManager.LoadScene (SceneManager.GetActiveScene().name);
-	}
+    // PUBLIC METHODS
+    public void RestartButtonClick()
+    {
+        Application.LoadLevel("Main");
+    }
+    //public void RestartButtonClick() {
+    //	SceneManager.LoadScene (SceneManager.GetActiveScene().name);
+    //}
 }

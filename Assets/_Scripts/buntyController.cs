@@ -31,6 +31,7 @@ public class buntyController : MonoBehaviour {
     private AudioSource _jumpSound;
     private AudioSource _coinSound;
     private AudioSource _hurtSound;
+    
 
 
 
@@ -163,6 +164,11 @@ public class buntyController : MonoBehaviour {
             //this._hurtSound.Play();
             this.gameController.LivesValue--;
         }
+
+        if (other.gameObject.CompareTag("Princess"))
+        {
+            gameController._endGame();
+        }
     }
 
     // PRIVATE METHODS
@@ -186,4 +192,5 @@ public class buntyController : MonoBehaviour {
     {
         this._transform.position = new Vector3(3340f, -198f, 0);
     }
+
 }
