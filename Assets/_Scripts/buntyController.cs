@@ -4,7 +4,7 @@ using System.Collections;
 
 //VELOCITYRANGE UTILITY CLASS
 
-    [System.Serializable]
+[System.Serializable]
 public class VelocityRange
 {
     // PUBLIC INSTANCE VARIABLES
@@ -27,19 +27,26 @@ public class buntyController : MonoBehaviour {
     private Transform _transform;
     private Rigidbody2D _rigidbody2D;
     private bool _isGrounded;
+    private AudioSource[] _audioSources;
+    private AudioSource _jumpSound;
+    private AudioSource _coinSound;
+    private AudioSource _hurtSound;
+
 
 
     public VelocityRange velocityRange;
     public float moveForce;
     public float jumpForce;
     public Transform groundCheck;
+    public Transform camera;
+    public GameController gameController;
 
     // Use this for initialization
     void Start()
     {
         //Intialize public variable
         this.velocityRange = new VelocityRange(300f, 30000f);
-        this.moveForce = 950f;
+        this.moveForce = 1000f;
         this.jumpForce = 25000f;
         
         
@@ -50,11 +57,22 @@ public class buntyController : MonoBehaviour {
         this._move = 0f;
         this._jump = 0f;
         this._facingRight = true;
+
+        // Setup AudioSources
+        this._audioSources = gameObject.GetComponents<AudioSource>();
+        this._jumpSound = this._audioSources[0];
+        this._coinSound = this._audioSources[1];
+        this._hurtSound = this._audioSources[2];
+
+        // place the hero in the starting position
+        this._spawn();
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        Vector3 curentPosition = new Vector3(this._transform.position.x + 250f, 0f, -10f);
+        this.camera.position = curentPosition;
         this._isGrounded = Physics2D.Linecast(this._transform.position, this.groundCheck.position, 1<<LayerMask.NameToLayer("ground"));
         Debug.DrawLine(this._transform.position, this.groundCheck.position);
 
@@ -65,11 +83,9 @@ public class buntyController : MonoBehaviour {
         float abVelX = Mathf.Abs(this._rigidbody2D.velocity.x);
         float abVelY = Mathf.Abs(this._rigidbody2D.velocity.y);
 
-        //Get a number between -1 to 1 for both Horizontal and Vertical
 
-
-
-        if (this._isGrounded)
+            //Get a number between -1 to 1 for both Horizontal and Vertical
+            if (this._isGrounded)
         {
 
             this._move = Input.GetAxis("Horizontal");
@@ -120,17 +136,33 @@ public class buntyController : MonoBehaviour {
             }
 
         }
-        else
+
+    }
+
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Potion"))
         {
-            
+            //this._coinSound.Play();
+            Destroy(other.gameObject);
+            this.gameController.ScoreValue += 10;
+        }
+
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            this._spawn2();
+            //this._hurtSound.Play();
+            this.gameController.LivesValue--;
         }
 
 
-
-
-        
-
-
+        if (other.gameObject.CompareTag("Death"))
+        {
+            this._spawn();
+            //this._hurtSound.Play();
+            this.gameController.LivesValue--;
+        }
     }
 
     // PRIVATE METHODS
@@ -143,5 +175,15 @@ public class buntyController : MonoBehaviour {
         else {
             this._transform.localScale = new Vector2(-1, 1);
         }
+    }
+
+    private void _spawn()
+    {
+        this._transform.position = new Vector3(-250f, -198f, 0);
+    }
+
+    private void _spawn2()
+    {
+        this._transform.position = new Vector3(3340f, -198f, 0);
     }
 }
