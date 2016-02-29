@@ -11,14 +11,15 @@ public class VelocityRange
     public float minimum;
     public float maximum;
 
-    public VelocityRange (float min, float max)
+    public VelocityRange(float min, float max)
     {
         this.minimum = min;
         this.maximum = max;
     }
 }
 
-public class buntyController : MonoBehaviour {
+public class buntyController : MonoBehaviour
+{
 
     private Animator _animator;
     private float _move;
@@ -29,9 +30,11 @@ public class buntyController : MonoBehaviour {
     private bool _isGrounded;
     private AudioSource[] _audioSources;
     private AudioSource _jumpSound;
-    private AudioSource _coinSound;
     private AudioSource _hurtSound;
-    
+    private AudioSource _potionSound;
+    private AudioSource _runSound;
+    private Vector2 _currentPos;
+
 
 
 
@@ -45,12 +48,14 @@ public class buntyController : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        this._transform = gameObject.GetComponent<Transform>();
+
         //Intialize public variable
         this.velocityRange = new VelocityRange(300f, 30000f);
         this.moveForce = 1000f;
         this.jumpForce = 25000f;
-        
-        
+
+
         //Intialize private variable
         this._transform = gameObject.GetComponent<Transform>();
         this._animator = gameObject.GetComponent<Animator>();
@@ -61,9 +66,10 @@ public class buntyController : MonoBehaviour {
 
         // Setup AudioSources
         this._audioSources = gameObject.GetComponents<AudioSource>();
-        this._jumpSound = this._audioSources[0];
-        this._coinSound = this._audioSources[1];
-        this._hurtSound = this._audioSources[2];
+
+        this._jumpSound = this._audioSources[2];
+        this._hurtSound = this._audioSources[1];
+        this._potionSound = this._audioSources[3];
 
         // place the hero in the starting position
         this._spawn();
@@ -74,7 +80,7 @@ public class buntyController : MonoBehaviour {
     {
         Vector3 curentPosition = new Vector3(this._transform.position.x + 250f, 0f, -10f);
         this.camera.position = curentPosition;
-        this._isGrounded = Physics2D.Linecast(this._transform.position, this.groundCheck.position, 1<<LayerMask.NameToLayer("ground"));
+        this._isGrounded = Physics2D.Linecast(this._transform.position, this.groundCheck.position, 1 << LayerMask.NameToLayer("ground"));
         Debug.DrawLine(this._transform.position, this.groundCheck.position);
 
 
@@ -85,8 +91,8 @@ public class buntyController : MonoBehaviour {
         float abVelY = Mathf.Abs(this._rigidbody2D.velocity.y);
 
 
-            //Get a number between -1 to 1 for both Horizontal and Vertical
-            if (this._isGrounded)
+        //Get a number between -1 to 1 for both Horizontal and Vertical
+        if (this._isGrounded)
         {
 
             this._move = Input.GetAxis("Horizontal");
@@ -95,6 +101,7 @@ public class buntyController : MonoBehaviour {
 
             if (this._move != 0)
             {
+
                 if (this._move > 0)
                 {
                     if (abVelX < this.velocityRange.maximum)
@@ -104,14 +111,24 @@ public class buntyController : MonoBehaviour {
                     this._facingRight = true;
                     this._flip();
                 }
+
                 if (this._move < 0)
                 {
-                    if (abVelX < this.velocityRange.maximum)
+                    if (this._transform.position.x > -250f)
                     {
-                        forceX = -this.moveForce;
+
+
+                        if (abVelX < this.velocityRange.maximum)
+                        {
+                            forceX = -this.moveForce;
+                        }
+                        this._facingRight = false;
+                        this._flip();
                     }
-                    this._facingRight = false;
-                    this._flip();
+                    else
+                    {
+                        this._transform.position = new Vector3(-250f, -198f, 0);
+                    }
                 }
 
                 // call the walk clip
@@ -120,6 +137,7 @@ public class buntyController : MonoBehaviour {
                 {
                     if (abVelY < this.velocityRange.maximum)
                     {
+                        this._jumpSound.Play();
                         forceY = this.jumpForce;
                     }
                     // call the "jump" clip
@@ -128,8 +146,13 @@ public class buntyController : MonoBehaviour {
                 }
                 this._rigidbody2D.AddForce(new Vector2(forceX, forceY));
                 Debug.Log(forceX);
+
+
+
+
             }
-            else {
+            else
+            {
 
 
                 // set default animation state to "idle"
@@ -145,15 +168,16 @@ public class buntyController : MonoBehaviour {
     {
         if (other.gameObject.CompareTag("Potion"))
         {
-            //this._coinSound.Play();
+            this._potionSound.Play();
             Destroy(other.gameObject);
             this.gameController.ScoreValue += 10;
+            this._potionSound.Play();
         }
 
         if (other.gameObject.CompareTag("Enemy"))
         {
             this._spawn2();
-            //this._hurtSound.Play();
+            this._hurtSound.Play();
             this.gameController.LivesValue--;
         }
 
@@ -161,12 +185,13 @@ public class buntyController : MonoBehaviour {
         if (other.gameObject.CompareTag("Death"))
         {
             this._spawn();
-            //this._hurtSound.Play();
+            this._hurtSound.Play();
             this.gameController.LivesValue--;
         }
 
         if (other.gameObject.CompareTag("Princess"))
         {
+            
             gameController._endGame();
         }
     }
@@ -178,7 +203,8 @@ public class buntyController : MonoBehaviour {
         {
             this._transform.localScale = new Vector2(1, 1);
         }
-        else {
+        else
+        {
             this._transform.localScale = new Vector2(-1, 1);
         }
     }

@@ -3,7 +3,8 @@ using System.Collections;
 
 
 
-public class enemyController : MonoBehaviour {
+public class enemyController : MonoBehaviour
+{
 
     private Animator _animator;
     private bool _isEnemy;
@@ -36,7 +37,7 @@ public class enemyController : MonoBehaviour {
         this._hurtSound = this._audioSources[2];
 
         // place the hero in the starting position
-       
+
     }
 
     // Update is called once per frame
@@ -54,8 +55,8 @@ public class enemyController : MonoBehaviour {
             this._animator.SetInteger("DragonState", 1);
         }
 
-        
-   
+
+
 
     }
 
