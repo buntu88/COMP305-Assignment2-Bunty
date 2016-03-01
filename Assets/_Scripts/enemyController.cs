@@ -1,19 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
+//Last Modified by      Vishal Guleria
+//Date last Modified    February 29,2016
+//Program description   COMP305 - Assignment 2 - Bunty; 2D Platform game.
 
 public class enemyController : MonoBehaviour
 {
 
     private Animator _animator;
     private bool _isEnemy;
-    private AudioSource[] _audioSources;
-    private AudioSource _jumpSound;
-    private AudioSource _coinSound;
-    private AudioSource _hurtSound;
     private Transform _transform;
-
 
 
     public Transform enemyCheck;
@@ -30,20 +27,11 @@ public class enemyController : MonoBehaviour
         this._animator = gameObject.GetComponent<Animator>();
 
 
-        // Setup AudioSources
-        this._audioSources = gameObject.GetComponents<AudioSource>();
-        this._jumpSound = this._audioSources[0];
-        this._coinSound = this._audioSources[1];
-        this._hurtSound = this._audioSources[2];
-
-        // place the hero in the starting position
-
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-
 
         this._isEnemy = Physics2D.Linecast(this._transform.position, this.enemyCheck.position, 1 << LayerMask.NameToLayer("Enemy"));
         Debug.DrawLine(this._transform.position, this.enemyCheck.position);
@@ -55,10 +43,5 @@ public class enemyController : MonoBehaviour
             this._animator.SetInteger("DragonState", 1);
         }
 
-
-
-
     }
-
-
 }

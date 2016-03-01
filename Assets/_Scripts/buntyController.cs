@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//Last Modified by      Vishal Guleria
+//Date last Modified    February 29,2016
+//Program description   COMP305 - Assignment 2 - Bunty; 2D Platform game.    
 
 //VELOCITYRANGE UTILITY CLASS
 
-[System.Serializable]
+
 public class VelocityRange
 {
     // PUBLIC INSTANCE VARIABLES
@@ -32,9 +35,6 @@ public class buntyController : MonoBehaviour
     private AudioSource _jumpSound;
     private AudioSource _hurtSound;
     private AudioSource _potionSound;
-    private AudioSource _runSound;
-    private Vector2 _currentPos;
-
 
 
 
@@ -42,7 +42,7 @@ public class buntyController : MonoBehaviour
     public float moveForce;
     public float jumpForce;
     public Transform groundCheck;
-    public Transform camera;
+    public new Transform camera;
     public GameController gameController;
 
     // Use this for initialization
@@ -67,9 +67,10 @@ public class buntyController : MonoBehaviour
         // Setup AudioSources
         this._audioSources = gameObject.GetComponents<AudioSource>();
 
-        this._jumpSound = this._audioSources[2];
-        this._hurtSound = this._audioSources[1];
-        this._potionSound = this._audioSources[3];
+
+        this._hurtSound = this._audioSources[0];
+        this._jumpSound = this._audioSources[1];
+        this._potionSound = this._audioSources[2];
 
         // place the hero in the starting position
         this._spawn();
@@ -114,6 +115,8 @@ public class buntyController : MonoBehaviour
 
                 if (this._move < 0)
                 {
+                    this._facingRight = false;
+                    this._flip();
                     if (this._transform.position.x > -250f)
                     {
 
@@ -123,10 +126,11 @@ public class buntyController : MonoBehaviour
                             forceX = -this.moveForce;
                         }
                         this._facingRight = false;
-                        this._flip();
+                        
                     }
                     else
                     {
+                        
                         this._transform.position = new Vector3(-250f, -198f, 0);
                     }
                 }
@@ -145,16 +149,9 @@ public class buntyController : MonoBehaviour
 
                 }
                 this._rigidbody2D.AddForce(new Vector2(forceX, forceY));
-                Debug.Log(forceX);
-
-
-
-
             }
             else
             {
-
-
                 // set default animation state to "idle"
                 this._animator.SetInteger("AnimState", 0);
             }
@@ -191,7 +188,6 @@ public class buntyController : MonoBehaviour
 
         if (other.gameObject.CompareTag("Princess"))
         {
-            
             gameController._endGame();
         }
     }
